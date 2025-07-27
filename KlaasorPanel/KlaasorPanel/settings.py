@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'phonenumber_field',
     'django_filters',
-    'kavenegar'
+    'kavenegar',
+    'django_elasticsearch_dsl',
     
     
 ]
@@ -201,3 +202,11 @@ CACHES = {
     }
 }
 
+
+
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'http://localhost:9200'
+    },
+}
