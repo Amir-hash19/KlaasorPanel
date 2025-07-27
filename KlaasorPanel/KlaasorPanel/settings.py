@@ -48,8 +48,10 @@ INSTALLED_APPS = [
     'financial',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'phonenumber_field',
     'django_filters',
+    'kavenegar'
     
     
 ]
@@ -87,14 +89,24 @@ WSGI_APPLICATION = "KlaasorPanel.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "Klaasor",
+#         "USER": "postgres",
+#         "PASSWORD": "69333032",
+#         "HOST": "localhost",
+#         "PORT": 5432,
+#     }
+# }
+
+
+
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "Klaasor",
-        "USER": "postgres",
-        "PASSWORD": "69333032",
-        "HOST": "localhost",
-        "PORT": 5432,
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",  # مسیر فایل پایگاه‌داد
     }
 }
 
@@ -147,7 +159,12 @@ REST_FRAMEWORK = {
         
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    'DEFAULT_THROTTLE_RATES': {
+        'logout': '5/min',
+        'user': '100/day'
+    }
     
 }
 

@@ -32,6 +32,7 @@ from .permissions import (
     IsTeacherOrMentor,
     IsTicketSupport,
 )
+from .throttles import LogoutRateThrottle
 from django.core.cache import cache
 import random
 from .tasks import send_sms_to_user
@@ -48,10 +49,22 @@ class CreateCustomUserView(CreateAPIView):
 
 
 # Editing personal information view (this is when user want to edit his/her infomation)
+# class UpdateCustomUSerView(UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = CustomUser.objects.all()
+#     serializer_class = AccountsSerializer
+
+
 class UpdateCustomUSerView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = CustomUser.objects.all()
     serializer_class = AccountsSerializer
+
+    def get_object(self):
+        """حالا کاربر فقط میتونه اکانت خودش رو ویرایش کنه """
+        return self.request.user
+
+
+
 
 
 def generate_otp():
@@ -121,3 +134,38 @@ class SignInWithPasswordView(APIView):
                 },
             }
         )
+
+
+
+
+
+class DetailAccountView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AccountsSerializer
+    """کاربر میتونه جزیات اکانت خودش رو ببینه """
+    def get_object(self):
+        return self.request.user
+
+
+
+
+
+class LogOutView(APIView):
+    """خارج شدن اکانت کاربر از حالت اهراز هویت شده"""
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [LogoutRateThrottle]
+
+    def post(self, request):
+            refresh_token = request.data.get('refresh_token')
+            if not refresh_token:
+                return Response({"detail":"Refresh tokne is required."}, status=400)
+            
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+                return Response({"detail":"User Logged Out Successfully"})
+            except Exception:
+                return Response({"detail":"Error during logout, please try again later"}, status=500)
+            
+            
+        

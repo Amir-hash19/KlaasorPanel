@@ -4,7 +4,7 @@ from django.conf import settings
 
 
 @shared_task
-def send_sms_to_user(phone_number, otp):
+def send_sms_to_user(phone, otp):
     try:
         api = KavenegarAPI(settings.KAVENEGAR_API_KEY)
         message = f"کد تایید شما: {otp}"
